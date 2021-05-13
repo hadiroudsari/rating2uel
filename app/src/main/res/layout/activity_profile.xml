@@ -18,5 +18,36 @@
             android:layout_height="wrap_content" android:id="@+id/startButton"
             app:layout_constraintTop_toBottomOf="@+id/welcomeText"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintVertical_bias="0.147"/>
+    <TextView
+            android:text=" TextView"
+            android:layout_width="163dp"
+            android:layout_height="174dp" android:id="@+id/textViewTimer"
+            android:drawableTop="@drawable/ic_timer"
+            android:visibility="invisible"
+            android:textSize="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/startButton"
+            android:layout_marginTop="120dp" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.254" app:layout_constraintHorizontal_bias="0.725"/>
+    <TextView
+            android:text="Duel will start in"
+            android:textSize="20dp"
+            android:layout_width="160dp"
+            android:layout_height="30dp" android:id="@+id/textViewBanner"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.681" app:layout_constraintEnd_toStartOf="@+id/textViewTimer"
+            app:layout_constraintHorizontal_bias="0.8"/>
+    <TextView
+            android:text="You will Duel with"
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/textViewOpponent"
+            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@+id/startButton"
+            android:layout_marginTop="136dp" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

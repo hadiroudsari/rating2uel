@@ -1,5 +1,7 @@
 package com.example.rating2;
 
+import android.content.Intent;
+import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +21,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 public class ProfileActivity extends AppCompatActivity {
@@ -31,9 +35,10 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         final Profile profile = (Profile) getIntent().getSerializableExtra("Profile");
-        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" + profile.getName());
+//        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" + profile.getName());
         TextView welcomTextView = (TextView) findViewById(R.id.welcomeText);
         welcomTextView.setText("Hello " + profile.getName());
+//        TextView textViewTimer=(TextView)findViewById(R.id.textViewTimer);
         Button button = findViewById(R.id.startButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,47 +65,79 @@ public class ProfileActivity extends AppCompatActivity {
         String url = "https://hadi.shghgh.ir:8443/maro/resteasy/gate/start/" + profile.getName() + "/" + profile.getSerialNumber();
         System.out.println("url:" + url);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        //   textView.setText("Response is: "+ response.substring(0,500));
-                        System.out.println("Response is: " + response.toString());
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        Common common = null;
-                        try {
-                            common = objectMapper.readValue(response.toString(), Common.class);
+                response -> {
+                    // Display the first 500 characters of the response string.
+                    //   textView.setText("Response is: "+ response.substring(0,500));
+                    System.out.println("Response is: " + response.toString());
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    Common common = null;
+                    try {
+                        common = objectMapper.readValue(response.toString(), Common.class);
 //                            //        map= objectMapper.readValue(response.toString(), new TypeReference<Map<String,Object>>(){});
-                            System.out.println("status is:" + common.getStatus());
+                        System.out.println("status is:" + common.getStatus());
 ////                            ProfileActivity.this.common.setStatus(common.getStatus());
 //                            ProfileActivity.this.common=common;
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
-                        }
-                        if (common.getStatus().equals("startok") || common.getStatus().equals("alreadystarted")) {
-//                            Toast.makeText(ProfileActivity.this, "initiating the game...", Toast.LENGTH_LONG).show();
-                            System.out.println("initiating the game.............................................");
-                            pooling(profile, new RequestCallBack() {
-                                @Override
-                                public void onSuccess(String responce) {
-                                    System.out.println("responce arrive to callback");
-                                    System.out.println(responce.toString());
-                                    System.out.println("after success callback");
-                                    SystemClock.sleep(3000);
-                                    System.out.println("after 3 second the counter is " + counter.getNumber());
-                                    if (counter.getNumber() < 3) {
-                                        initiatingGame(profile);
-                                    } else {
-                                        System.out.println("counter is " + counter.getNumber() + " there is no one to play");
-                                    }
-                                }
-                            }, counter);
-//
-                        }else if(common.getStatus().equals("attack")){
-                            System.out.println("time to attack");
-                        }
-
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
                     }
+                    if (common.getStatus().equals("startok") || common.getStatus().equals("alreadystarted")) {
+//                            Toast.makeText(ProfileActivity.this, "initiating the game...", Toast.LENGTH_LONG).show();
+                        System.out.println("initiating the game.............................................");
+                        pooling(profile, new RequestCallBack() {
+                            @Override
+                            public void onSuccess(String responce) {
+                                System.out.println("responce arrive to callback");
+                                System.out.println(responce.toString());
+                                System.out.println("after success callback");
+                                SystemClock.sleep(3000);
+                                System.out.println("after 3 second the counter is " + counter.getNumber());
+                                if (counter.getNumber() < 3) {
+                                    initiatingGame(profile);
+                                } else {
+                                    System.out.println("counter is " + counter.getNumber() + " there is no one to play");
+                                }
+                            }
+                        }, counter);
+//
+                    }else if(common.getStatus().equals("attack")){
+                        System.out.println("time to attack");
+                        TextView textViewTimer=(TextView)findViewById(R.id.textViewTimer);
+                        TextView textViewBanner=findViewById(R.id.textViewBanner);
+                        TextView textViewOpponent=findViewById(R.id.textViewOpponent);
+                        textViewTimer.setVisibility(View.INVISIBLE);
+                        textViewBanner.setVisibility(View.INVISIBLE);
+                        textViewOpponent.setVisibility(View.INVISIBLE);
+                        profile.setOpponent(common.getOpponent());
+                        profile.setDuelTime(common.getDuelTime());
+                        //Timer duration
+                        System.out.println("dueltime: "+profile.getDuelTime());
+                        System.out.println("remain to dueltime "+Math.abs( Long.parseLong(profile.getDuelTime()) - System.currentTimeMillis()));
+                        long duration = Long.parseLong(profile.getDuelTime()) - System.currentTimeMillis();
+                        if(duration>0){
+                        //initialize countdown
+                            textViewTimer.setVisibility(View.VISIBLE);
+                            textViewBanner.setVisibility(View.VISIBLE);
+                            textViewOpponent.setVisibility(View.VISIBLE);
+                            textViewOpponent.setText("You will duel with " + profile.getOpponent());
+                        new CountDownTimer(duration,1000){
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                System.out.println();
+                            String tick=String.format(Locale.ENGLISH,"%02d", TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished));
+                                textViewTimer.setText(tick);
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                newActivity(profile);
+                            }
+                        }.start();
+                        }else{
+                            newActivity(profile);
+                        }
+//                        newActivity(profile);
+                    }
+
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -156,5 +193,14 @@ public class ProfileActivity extends AppCompatActivity {
 //        queue.notify();
         System.out.println("after put  pooling request into queue");
 
+    }
+
+
+    public void newActivity(Profile profile){
+        Intent i = new Intent(ProfileActivity.this,BattleActivity.class);
+        //    startActivity(new Intent(MainActivity.this,ProfileActivity.class));
+        i.putExtra("Profile", profile);
+        startActivity(i);
+        finish();
     }
 }

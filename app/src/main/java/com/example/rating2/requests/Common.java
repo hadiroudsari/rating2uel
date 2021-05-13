@@ -7,6 +7,7 @@ public class Common {
     private String opponent;
     private String battleId;
     private String winnerName;
+    private String duelTime;
 
     public Common() {
     }
@@ -16,7 +17,7 @@ public class Common {
         this.error = error;
         this.opponent = opponent;
         this.battleId = battleId;
-        this.winnerName=winnerName;
+        this.winnerName = winnerName;
     }
 
     public String getStatus() {
@@ -57,5 +58,13 @@ public class Common {
 
     public void setWinnerName(String winnerName) {
         this.winnerName = winnerName;
+    }
+
+    public String getDuelTime() {
+        return duelTime;
+    }
+
+    public void setDuelTime(String duelTime) {
+        this.duelTime = duelTime;
     }
 }
