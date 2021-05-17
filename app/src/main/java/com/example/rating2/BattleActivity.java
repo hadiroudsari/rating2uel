@@ -11,6 +11,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.rating2.requests.Common;
 import com.example.rating2.utill.RequestCallBack;
+import com.example.rating2.view.BattleView;
+import com.example.rating2.view.MyBattleView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,6 +21,8 @@ public class BattleActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battle);
+//        MyBattleView myBattleView=new MyBattleView(this);
+
         final Profile profile = (Profile) getIntent().getSerializableExtra("Profile");
         System.out.println("in battle with profile " + profile.getName());
         System.out.println("time and opponent" + profile.getOpponent() + "  " + profile.getDuelTime());
@@ -33,6 +37,9 @@ public class BattleActivity extends AppCompatActivity {
 
             }
         });
+//        MyBattleView myBattleView=new MyBattleView(this,profile);
+//        setContentView(myBattleView);
+
     }
 
     private void attack(Profile profile) {
@@ -49,15 +56,21 @@ public class BattleActivity extends AppCompatActivity {
                 if (common.getStatus().equals("ok") || common.getStatus().equals("alreadyattacked")) {
                     cheackWinner(profile, responce -> {
                         System.out.println("Response is: " +responce);
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            Common common = null;
-//            try {
-//                common = objectMapper.readValue(response.toString(), Common.class);
-//                System.out.println("status is:" + common.getStatus());
-//
-//            } catch (JsonProcessingException e) {
-//                e.printStackTrace();
-//            }
+                        Common common2 = null;
+                        try {
+                            common2 = objectMapper.readValue(responce.toString(), Common.class);
+                            System.out.println("proftile name " +profile.getName());
+                            System.out.println("winner name " +common2.getWinnerName());
+                            if(common2.getWinnerName().equals(profile.getName())){
+                                System.out.println("you win shot Up");
+                                MyBattleView myBattleView=new MyBattleView(this);
+                                myBattleView.shotUp();
+                            }else{
+                                System.out.println("you lost shot down");
+                            }
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
 
                     });
                 }

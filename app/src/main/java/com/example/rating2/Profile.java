@@ -40,4 +40,14 @@ public class Profile implements Serializable {
     public void setDuelTime(String duelTime) {
         this.duelTime = duelTime;
     }
+
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "name='" + name + '\'' +
+                ", SerialNumber='" + SerialNumber + '\'' +
+                ", opponent='" + opponent + '\'' +
+                ", duelTime='" + duelTime + '\'' +
+                '}';
+    }
 }
