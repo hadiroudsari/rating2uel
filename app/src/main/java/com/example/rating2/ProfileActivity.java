@@ -45,7 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 System.out.println("starting...");
                 initiatingGame(profile);
-
+                counter.setNumber(0);
             }
         });
     }
@@ -89,9 +89,9 @@ public class ProfileActivity extends AppCompatActivity {
                                 System.out.println("responce arrive to callback");
                                 System.out.println(responce.toString());
                                 System.out.println("after success callback");
-                                SystemClock.sleep(3000);
-                                System.out.println("after 3 second the counter is " + counter.getNumber());
-                                if (counter.getNumber() < 3) {
+                                SystemClock.sleep(2000);
+                                System.out.println("after 2 second the counter is " + counter.getNumber());
+                                if (counter.getNumber() < 5) {
                                     initiatingGame(profile);
                                 } else {
                                     System.out.println("counter is " + counter.getNumber() + " there is no one to play");
@@ -198,7 +198,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void newActivity(Profile profile){
         Intent i = new Intent(ProfileActivity.this,BattleActivity.class);
-        //    startActivity(new Intent(MainActivity.this,ProfileActivity.class));
         i.putExtra("Profile", profile);
         startActivity(i);
         finish();

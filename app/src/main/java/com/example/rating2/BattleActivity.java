@@ -11,7 +11,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.rating2.requests.Common;
 import com.example.rating2.utill.RequestCallBack;
-import com.example.rating2.view.BattleView;
 import com.example.rating2.view.MyBattleView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,8 +20,6 @@ public class BattleActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battle);
-//        MyBattleView myBattleView=new MyBattleView(this);
-
         final Profile profile = (Profile) getIntent().getSerializableExtra("Profile");
         System.out.println("in battle with profile " + profile.getName());
         System.out.println("time and opponent" + profile.getOpponent() + "  " + profile.getDuelTime());
@@ -37,8 +34,7 @@ public class BattleActivity extends AppCompatActivity {
 
             }
         });
-//        MyBattleView myBattleView=new MyBattleView(this,profile);
-//        setContentView(myBattleView);
+
 
     }
 
@@ -55,18 +51,20 @@ public class BattleActivity extends AppCompatActivity {
                 System.out.println("status is:" + common.getStatus());
                 if (common.getStatus().equals("ok") || common.getStatus().equals("alreadyattacked")) {
                     cheackWinner(profile, responce -> {
-                        System.out.println("Response is: " +responce);
+                        System.out.println("Response is: " + responce);
                         Common common2 = null;
                         try {
                             common2 = objectMapper.readValue(responce.toString(), Common.class);
-                            System.out.println("proftile name " +profile.getName());
-                            System.out.println("winner name " +common2.getWinnerName());
-                            if(common2.getWinnerName().equals(profile.getName())){
+                            System.out.println("proftile name " + profile.getName());
+                            System.out.println("winner name " + common2.getWinnerName());
+                            if (common2.getWinnerName().equals(profile.getName())) {
                                 System.out.println("you win shot Up");
-                                MyBattleView myBattleView=new MyBattleView(this);
+                                MyBattleView myBattleView = new MyBattleView(this);
                                 myBattleView.shotUp();
-                            }else{
+                            } else {
                                 System.out.println("you lost shot down");
+                                MyBattleView myBattleView = new MyBattleView(this);
+                                myBattleView.shotDown();
                             }
                         } catch (JsonProcessingException e) {
                             e.printStackTrace();
