@@ -59,10 +59,13 @@ public class ProfileActivity extends AppCompatActivity {
 //
 //    }
     public void initiatingGame(final Profile profile) {
+        if(counter.getNumber()==1 || counter.getNumber()==3 || counter.getNumber()==5){
+            Toast.makeText(this, "Searching for other player...", Toast.LENGTH_LONG).show();
 
+        }
         RequestQueue queue = Volley.newRequestQueue(this);
         //String Request initialized
-        String url = "https://hadi.shghgh.ir:8443/maro/resteasy/gate/start/" + profile.getName() + "/" + profile.getSerialNumber();
+        String url = "https://hadi.shghgh.ir:8443/maro/resteasy/gate/start/" + profile.getName() + "/" + profile.getSerialNumber() + "/" + counter.getNumber();
         System.out.println("url:" + url);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
@@ -73,10 +76,11 @@ public class ProfileActivity extends AppCompatActivity {
                     Common common = null;
                     try {
                         common = objectMapper.readValue(response.toString(), Common.class);
-//                            //        map= objectMapper.readValue(response.toString(), new TypeReference<Map<String,Object>>(){});
                         System.out.println("status is:" + common.getStatus());
-////                            ProfileActivity.this.common.setStatus(common.getStatus());
-//                            ProfileActivity.this.common=common;
+                        if(common.getStatus().equals("no")){
+                            counter.setNumber(0);
+                            Toast.makeText(this, "There is no one to play", Toast.LENGTH_LONG).show();
+                                                }
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
@@ -91,7 +95,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 System.out.println("after success callback");
                                 SystemClock.sleep(2000);
                                 System.out.println("after 2 second the counter is " + counter.getNumber());
-                                if (counter.getNumber() < 5) {
+                                if (counter.getNumber() < 8) {
                                     initiatingGame(profile);
                                 } else {
                                     System.out.println("counter is " + counter.getNumber() + " there is no one to play");
@@ -99,40 +103,40 @@ public class ProfileActivity extends AppCompatActivity {
                             }
                         }, counter);
 //
-                    }else if(common.getStatus().equals("attack")){
+                    } else if (common.getStatus().equals("attack")) {
                         System.out.println("time to attack");
-                        TextView textViewTimer=(TextView)findViewById(R.id.textViewTimer);
-                        TextView textViewBanner=findViewById(R.id.textViewBanner);
-                        TextView textViewOpponent=findViewById(R.id.textViewOpponent);
+                        TextView textViewTimer = (TextView) findViewById(R.id.textViewTimer);
+                        TextView textViewBanner = findViewById(R.id.textViewBanner);
+                        TextView textViewOpponent = findViewById(R.id.textViewOpponent);
                         textViewTimer.setVisibility(View.INVISIBLE);
                         textViewBanner.setVisibility(View.INVISIBLE);
                         textViewOpponent.setVisibility(View.INVISIBLE);
                         profile.setOpponent(common.getOpponent());
                         profile.setDuelTime(common.getDuelTime());
                         //Timer duration
-                        System.out.println("dueltime: "+profile.getDuelTime());
-                        System.out.println("remain to dueltime "+Math.abs( Long.parseLong(profile.getDuelTime()) - System.currentTimeMillis()));
+                        System.out.println("dueltime: " + profile.getDuelTime());
+                        System.out.println("remain to dueltime " + Math.abs(Long.parseLong(profile.getDuelTime()) - System.currentTimeMillis()));
                         long duration = Long.parseLong(profile.getDuelTime()) - System.currentTimeMillis();
-                        if(duration>0){
-                        //initialize countdown
+                        if (duration > 0) {
+                            //initialize countdown
                             textViewTimer.setVisibility(View.VISIBLE);
                             textViewBanner.setVisibility(View.VISIBLE);
                             textViewOpponent.setVisibility(View.VISIBLE);
                             textViewOpponent.setText("You will duel with " + profile.getOpponent());
-                        new CountDownTimer(duration,1000){
-                            @Override
-                            public void onTick(long millisUntilFinished) {
-                                System.out.println();
-                            String tick=String.format(Locale.ENGLISH,"%02d", TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished));
-                                textViewTimer.setText(tick);
-                            }
+                            new CountDownTimer(duration, 1000) {
+                                @Override
+                                public void onTick(long millisUntilFinished) {
+                                    System.out.println();
+                                    String tick = String.format(Locale.ENGLISH, "%02d", TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished));
+                                    textViewTimer.setText(tick);
+                                }
 
-                            @Override
-                            public void onFinish() {
-                                newActivity(profile);
-                            }
-                        }.start();
-                        }else{
+                                @Override
+                                public void onFinish() {
+                                    newActivity(profile);
+                                }
+                            }.start();
+                        } else {
                             newActivity(profile);
                         }
 //                        newActivity(profile);
@@ -196,8 +200,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    public void newActivity(Profile profile){
-        Intent i = new Intent(ProfileActivity.this,BattleActivity.class);
+    public void newActivity(Profile profile) {
+        Intent i = new Intent(ProfileActivity.this, BattleActivity.class);
         i.putExtra("Profile", profile);
         startActivity(i);
         finish();

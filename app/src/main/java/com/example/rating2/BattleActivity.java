@@ -70,7 +70,7 @@ public class BattleActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                    });
+                    },common);
                 }
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
@@ -82,9 +82,9 @@ public class BattleActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    private void cheackWinner(Profile profile, RequestCallBack requestCallBack) {
+    private void cheackWinner(Profile profile, RequestCallBack requestCallBack,Common common) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://hadi.shghgh.ir:8443/maro/resteasy/gate/check/" + profile.getName() + "/" + profile.getSerialNumber();
+        String url = "https://hadi.shghgh.ir:8443/maro/resteasy/gate/check/" + profile.getName() + "/" + profile.getSerialNumber()+"/"+common.getBattleId();
         System.out.println("url:" + url);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
             requestCallBack.onSuccess(response);
